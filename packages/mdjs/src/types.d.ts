@@ -5,7 +5,6 @@ export interface MarkdownResult {
   mdAst: Node;
   html: string;
   jsCode: string;
-  jsAst?: File;
   stories: Story[];
 }
 

@@ -1,56 +1,25 @@
-/** @typedef {import('@mdjs/core').MarkdownResult} MarkdownResult */
-
-const { parse } = require('@babel/parser');
-const { mdToCsf } = require('./mdToCsf');
-
-const { Parser } = require('../../mdjs/index.js');
-const { HtmlRenderer } = require('../../mdjs/index.js');
-
-class KeepCodeBlocksHtmlRenderer extends HtmlRenderer {
-  // eslint-disable-next-line camelcase
-  code_block(node) {
-    this.cr();
-    this.lit(`\n\`\`\`${node.info}\n`);
-    this.lit(`${node.literal}\`\`\`\n`);
-    this.cr();
-  }
-}
-
-/**
- * @param {string} markdown
- */
-function mdjsToMd(markdown) {
-  const parser = new Parser({
-    processStories: {
-      storyTag: name => `<Story name="${name}"></Story>`,
-      previewStoryTag: name => `<Preview><Story name="${name}"></Story></Preview>`,
-    },
-  });
-  return parser.parse(markdown);
-}
-
-/**
- * @param {MarkdownResult} markdownResult
- */
-function mdToPartialHtml(markdownResult) {
-  return new KeepCodeBlocksHtmlRenderer().render(markdownResult.mdAst);
-}
+const { mdjsToMd } = require('./mdjsToMd');
+const { renameDefaultExport } = require('./renameDefaultExport');
+const { createStoriesCode } = require('./createStoriesCode');
+const { mdToJsx } = require('./mdToJsx');
+const { jsxToJs } = require('./jsxToJs');
 
 /**
  * @param {string} filePath
  * @param {string} markdown
+ * @returns {Promise<string>}
  */
 async function mdjsToCsf(filePath, markdown) {
-  const markdownResult = mdjsToMd(markdown);
-  markdownResult.jsAst = parse(markdownResult.jsCode, { sourceType: 'module' });
-  markdownResult.html = mdToPartialHtml(markdownResult);
+  const markdownResult = mdjsToMd(filePath, markdown);
 
-  return mdToCsf(filePath, markdownResult);
+  const jsCode = renameDefaultExport(markdownResult.jsCode);
+  const storiesCode = createStoriesCode(markdownResult.stories);
+  const docsJsx = await mdToJsx(filePath, markdownResult);
+  const docs = await jsxToJs(docsJsx, filePath);
+
+  return `${jsCode}\n${storiesCode}\n${docs}`;
 }
 
 module.exports = {
   mdjsToCsf,
-  // exports for testing only
-  mdjsToMd,
-  mdToPartialHtml,
 };
