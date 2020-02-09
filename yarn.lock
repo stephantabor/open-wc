@@ -13353,6 +13353,11 @@ mkdirp@0.3.0:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.3.0.tgz#1bbf5ab1ba827af23575143490426455f481fe1e"
   integrity sha1-G79asbqCevI1dRQ0kEJkVfSB/h4=
 
+mocha-chai-snapshot@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mocha-chai-snapshot/-/mocha-chai-snapshot-1.0.0.tgz#6c8747a2fa8d5b3b2d1d0600bb3e644b0fd5c913"
+  integrity sha512-ZXdoO2ZUVik5yz36sdGDQ4LuSgjadpreeJO0A75kMO5Q6cS8Qh3FJcGllYbMZii2wQB0c6Bx1vKTHW/MfiqG1w==
+
 mocha@^6.2.2:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.2.2.tgz#5d8987e28940caf8957a7d7664b910dc5b2fea20"

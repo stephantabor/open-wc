@@ -13,7 +13,7 @@ async function jsxToJs(docsJsx, filename) {
     sourceMaps: true,
     plugins: [
       require.resolve('@babel/plugin-syntax-import-meta'),
-      require.resolve('@babel/plugin-transform-react-jsx'),
+      [require.resolve('@babel/plugin-transform-react-jsx'), { useSpread: true }],
     ],
   });
   if (!result || typeof result.code !== 'string') {

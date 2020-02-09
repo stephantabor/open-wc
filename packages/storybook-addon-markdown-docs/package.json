@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test:node",
+    "test:update-snapshots": "export CHAI_SNAPSHOT_UPDATE=true && npm run test:node",
     "test:node": "mocha",
     "test:watch": "mocha --watch",
     "build:styles": "node styles/create-global-styles.js",
@@ -42,6 +43,7 @@
     "babel-loader": "^8.0.0",
     "chai": "^4.2.0",
     "es-dev-server": "^1.38.3",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "mocha-chai-snapshot": "^1.0.0"
   }
 }
