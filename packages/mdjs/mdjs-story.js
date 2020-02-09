@@ -1,24 +1,29 @@
+/* eslint-disable */
+
+// TODO: move into own package or on wc.dev?
+
 import { LitElement, html, css } from 'lit-element';
 
 class MdJsStory extends LitElement {
-
   static get properties() {
     return {
       story: {
         type: Function,
-      }
+      },
     };
   }
 
   constructor() {
     super();
-    this.story = () => html`<p>Loading...</p>`;
+    this.story = () =>
+      html`
+        <p>Loading...</p>
+      `;
   }
 
   render() {
     return this.story();
   }
-
 }
 
 customElements.define('mdjs-story', MdJsStory);

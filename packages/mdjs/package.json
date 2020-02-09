@@ -18,7 +18,7 @@
     "start": "es-dev-server -c demo/server.js --root-dir ../../",
     "test": "npm run test:node",
     "test:node": "mocha",
-    "test:watch": "onchange 'src/**/*.js' 'test/**/*.js' -- npm run test --silent"
+    "test:watch": "mocha --watch"
   },
   "files": [
     "src"
@@ -26,20 +26,34 @@
   "keywords": [
     "open-wc",
     "markdown",
-    "commonmark"
+    "unified",
+    "remark"
   ],
+  "main": "./index.js",
+  "types": "./src/types.d.ts",
   "dependencies": {
     "@babel/core": "^7.8.4",
     "@babel/parser": "^7.8.4",
-    "@types/commonmark": "^0.27.4",
-    "commonmark": "^0.29.1",
-    "deepmerge": "^3.2.0",
-    "github-markdown-css": "^3.0.1"
+    "@types/unist": "^2.0.3",
+    "@types/vfile": "^4.0.0",
+    "github-markdown-css": "^3.0.1",
+    "unified": "^8.4.2",
+    "unist-util-remove": "^1.0.3",
+    "unist-util-visit": "^2.0.1"
   },
   "devDependencies": {
+    "rehype-autolink-headings": "^2.0.5",
+    "rehype-slug": "^2.0.3",
+    "rehype-stringify": "^6.0.1",
+    "remark": "^11.0.2",
+    "remark-autolink-headings": "^5.2.1",
+    "remark-html": "^10.0.0",
+    "remark-parse": "^7.0.2",
+    "remark-rehype": "^5.0.0",
+    "remark-slug": "^5.1.2",
+    "remark-stringify": "^7.0.4",
     "chai": "^4.2.0",
-    "es-dev-server": "^1.38.3",
-    "mocha": "^6.2.2",
-    "onchange": "^5.2.0"
+    "es-dev-server": "^1.39.0",
+    "mocha": "^6.2.2"
   }
 }

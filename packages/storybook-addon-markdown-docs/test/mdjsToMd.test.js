@@ -40,7 +40,7 @@ describe('mdjsToMd', () => {
 
   it('preserves codeblocks', () => {
     const input = [
-      //
+      // 
       '# Title',
       '',
       '```js',
@@ -62,11 +62,9 @@ describe('mdjsToMd', () => {
       "const foo = 'bar'",
       '```',
       '',
-      '',
       '```html',
       '<my-element foo="bar"></my-element>',
       '```',
-      '',
       '',
     ]);
   });
@@ -112,12 +110,12 @@ describe('mdjsToMd', () => {
 
     expect(output.stories).to.eql([
       {
-        code: 'export const MyStory = () => html`<div>Hello world></div>`\n',
+        code: 'export const MyStory = () => html`<div>Hello world></div>`',
         key: 'MyStory',
         name: 'MyStory',
       },
       {
-        code: 'export const YourStory = () => html`<div>Goodbye world></div>`\n',
+        code: 'export const YourStory = () => html`<div>Goodbye world></div>`',
         key: 'YourStory',
         name: 'YourStory',
       },
