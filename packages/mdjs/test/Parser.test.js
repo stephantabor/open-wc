@@ -30,8 +30,7 @@ describe('Parser', () => {
     expect(stories.length).to.equal(1);
     expect(stories[0].key).to.equal('fooStory');
     expect(stories[0].name).to.equal('fooStory');
-    expect(stories[0].displayedCode).to.equal('export const fooStory = () => {}\n');
-    expect(stories[0].codeAst).to.not.be.undefined; // babel AST
+    expect(stories[0].code).to.equal('export const fooStory = () => {}\n');
   });
 });
 

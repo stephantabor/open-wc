@@ -11,9 +11,12 @@ async function jsxToJs(docsJsx, filename) {
   const result = await transformAsync(docsJsx, {
     filename,
     sourceMaps: true,
-    plugins: [require.resolve('@babel/plugin-transform-react-jsx')],
+    plugins: [
+      require.resolve('@babel/plugin-syntax-import-meta'),
+      require.resolve('@babel/plugin-transform-react-jsx'),
+    ],
   });
-  if (!result) {
+  if (!result || typeof result.code !== 'string') {
     throw new Error(`Something went wrong when compiling ${filename}`);
   }
   return result.code;

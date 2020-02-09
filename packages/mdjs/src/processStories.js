@@ -4,8 +4,8 @@ const { parse: parseJs } = require('@babel/parser');
 const { traverse } = require('@babel/core');
 const { Node } = require('commonmark');
 
-function extractStoryData(codeString) {
-  const codeAst = parseJs(codeString, { sourceType: 'module' });
+function extractStoryData(code) {
+  const codeAst = parseJs(code, { sourceType: 'module' });
   let key;
   let name;
   traverse(codeAst, {
@@ -15,7 +15,7 @@ function extractStoryData(codeString) {
       name = key;
     },
   });
-  return { key, name, codeAst, codeString };
+  return { key, name, code };
 }
 
 function defaultStoryTag(name, i) {
@@ -30,7 +30,10 @@ function defaultPreviewStoryTag(name, i) {
  * @param {MarkdownResult} data
  * @returns {MarkdownResult}
  */
-function processStories(data, { storyTag = defaultStoryTag, previewStoryTag = defaultPreviewStoryTag } = {}) {
+function processStories(
+  data,
+  { storyTag = defaultStoryTag, previewStoryTag = defaultPreviewStoryTag } = {},
+) {
   const stories = [];
 
   const walker = data.mdAst.walker();
@@ -44,10 +47,7 @@ function processStories(data, { storyTag = defaultStoryTag, previewStoryTag = de
         htmlBlock.literal = storyTag(storyData.name, stories.length);
         node.insertAfter(htmlBlock);
 
-        stories.push({
-          ...storyData,
-          displayedCode: node.literal,
-        });
+        stories.push(storyData);
         node.unlink();
       }
       if (node.info === 'js preview-story') {
@@ -56,10 +56,7 @@ function processStories(data, { storyTag = defaultStoryTag, previewStoryTag = de
         htmlBlock.literal = previewStoryTag(storyData.name, stories.length);
         node.insertAfter(htmlBlock);
 
-        stories.push({
-          ...storyData,
-          displayedCode: node.literal,
-        });
+        stories.push(storyData);
         node.unlink();
       }
     }

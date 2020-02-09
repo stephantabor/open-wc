@@ -21,11 +21,10 @@ function mdToPartialHtml(markdownResult) {
 }
 
 /**
- * @param {string} filePath
  * @param {string} markdown
  * @returns {MarkdownResult}
  */
-function mdjsToMd(filePath, markdown) {
+function mdjsToMd(markdown) {
   const parser = new Parser({
     processStories: {
       storyTag: name => `<Story name="${name}"></Story>`,
@@ -33,8 +32,8 @@ function mdjsToMd(filePath, markdown) {
     },
   });
   const markdownResult = parser.parse(markdown);
-
   markdownResult.html = mdToPartialHtml(markdownResult);
+
   return markdownResult;
 }
 

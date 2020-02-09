@@ -12,7 +12,7 @@ module.exports = {
         const cleanURL = url.split('?')[0].split('#')[0];
 
         if (cleanURL.endsWith('md')) {
-          const markdownStory = await mdjsToCsf(cleanURL, body);
+          const markdownStory = await mdjsToCsf(body, cleanURL);
           return { body: markdownStory };
         }
       },
