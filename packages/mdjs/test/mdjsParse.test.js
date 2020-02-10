@@ -10,7 +10,7 @@ const { mdjsParse } = require('../src/mdjsParse.js');
 const { expect } = chai;
 
 describe('mdjsParse', () => {
-  it('extracts only "js script" code blocks', (done) => {
+  it('extracts only "js script" code blocks', async () => {
     const input = [
       '## Intro',
       '```js',
@@ -20,15 +20,14 @@ describe('mdjsParse', () => {
       'const bar = 22;',
       '```',
     ].join('\n');
-    unified()
+    const parser = unified()
       .use(markdown)
       .use(mdjsParse)
-      .use(html)
-      .process(input, (err, file) => {
-        expect(file.contents).to.equal('<h2>Intro</h2>\n<pre><code class="language-js">const foo = 1;\n</code></pre>\n');
-        // expect(file.node.children.length).to.equal(2);
-        expect(file.data.jsCode).to.equal('const bar = 22;');
-        done();
-      });
+      .use(html);
+    const result = await parser.process(input);
+    expect(result.contents).to.equal(
+      '<h2>Intro</h2>\n<pre><code class="language-js">const foo = 1;\n</code></pre>\n',
+    );
+    expect(result.data.jsCode).to.equal('const bar = 22;');
   });
 });

@@ -1,18 +1,10 @@
 const visit = require('unist-util-visit');
-const { parse: parseJs } = require('@babel/parser');
-const { traverse } = require('@babel/core');
+const { init, parse } = require('es-module-lexer');
 
 function extractStoryData(code) {
-  const codeAst = parseJs(code, { sourceType: 'module' });
-  let key;
-  let name;
-  traverse(codeAst, {
-    ExportNamedDeclaration(path) {
-      key = path.node.declaration.declarations[0].id.name;
-      // TODO: check if there is an override
-      name = key;
-    },
-  });
+  const parsed = parse(code);
+  const key = parsed[1][0];
+  const name = key;
   return { key, name, code };
 }
 
@@ -24,12 +16,16 @@ function defaultPreviewStoryTag(name, i) {
   return `<mdjs-preview name="${name}" id="mdjs-story-${i}"></mdjs-preview>`;
 }
 
-function mdjsStoryParse({ storyTag = defaultStoryTag, previewStoryTag = defaultPreviewStoryTag } = {}) {
+function mdjsStoryParse({
+  storyTag = defaultStoryTag,
+  previewStoryTag = defaultPreviewStoryTag,
+} = {}) {
   const stories = [];
 
-  return (tree, file) => {
+  return async (tree, file) => {
     // unifiedjs expects node changes to be made on the given node...
     /* eslint-disable no-param-reassign */
+    await init;
     visit(tree, 'code', node => {
       if (node.lang === 'js' && node.meta === 'story') {
         const storyData = extractStoryData(node.value);
@@ -50,9 +46,9 @@ function mdjsStoryParse({ storyTag = defaultStoryTag, previewStoryTag = defaultP
 
     return tree;
     /* eslint-enable no-param-reassign */
-  }
+  };
 }
 
 module.exports = {
-  mdjsStoryParse
-}
+  mdjsStoryParse,
+};

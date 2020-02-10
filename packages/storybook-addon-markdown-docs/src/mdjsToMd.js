@@ -17,9 +17,9 @@ function code(h, node) {
 
 /**
  * @param {string} markdownText
- * @returns {MarkdownResult}
+ * @returns {Promise<MarkdownResult>}
  */
-function mdjsToMd(markdownText) {
+async function mdjsToMd(markdownText) {
   const parser = unified()
     .use(markdown)
     .use(mdjsParse)
@@ -33,24 +33,13 @@ function mdjsToMd(markdownText) {
         code,
       },
     });
-  const result = parser.processSync(markdownText);
+  const result = await parser.process(markdownText);
 
   return {
     html: result.contents,
     jsCode: result.data.jsCode,
     stories: result.data.stories,
   };
-
-  // const parser = new Parser({
-  //   processStories: {
-  //     storyTag: name => `<Story name="${name}"></Story>`,
-  //     previewStoryTag: name => `<Preview><Story name="${name}"></Story></Preview>`,
-  //   },
-  // });
-  // const markdownResult = parser.parse(markdown);
-  // markdownResult.html = mdToPartialHtml(markdownResult);
-
-  // return markdownResult;
 }
 
 module.exports = { mdjsToMd };

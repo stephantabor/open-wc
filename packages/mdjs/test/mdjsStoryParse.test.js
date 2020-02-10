@@ -23,44 +23,44 @@ describe('mdjsStoryParse', () => {
     '```',
   ].join('\n');
 
-  it('extracts code blocks with "js story" and "js preview-story" and places marker tags', () => {
+  it('extracts code blocks with "js story" and "js preview-story" and places marker tags', async () => {
     const expected = [
       '<h2>Intro</h2>',
       '<pre><code class="language-js">const foo = 1;',
       '</code></pre>',
       '<mdjs-story name="fooStory" id="mdjs-story-0"></mdjs-story>',
       '<mdjs-preview name="fooPreviewStory" id="mdjs-story-1"></mdjs-preview>',
-      ''
+      '',
     ].join('\n');
 
     const parser = unified()
       .use(markdown)
       .use(mdjsStoryParse)
       .use(html);
-    const result = parser.processSync(input);
+    const result = await parser.process(input);
     expect(result.contents).to.equal(expected);
     expect(result.data.stories).to.deep.equal([
       {
         key: 'fooStory',
         name: 'fooStory',
-        code: 'export const fooStory = () => {}'
+        code: 'export const fooStory = () => {}',
       },
       {
         key: 'fooPreviewStory',
         name: 'fooPreviewStory',
-        code: 'export const fooPreviewStory = () => {}'
-      }
+        code: 'export const fooPreviewStory = () => {}',
+      },
     ]);
   });
 
-  it('allows to configure the marker tags', () => {
+  it('allows to configure the marker tags', async () => {
     const expected = [
       '<h2>Intro</h2>',
       '<pre><code class="language-js">const foo = 1;',
       '</code></pre>',
       '<Story name="fooStory"></Story>',
       '<Preview><Story name="fooPreviewStory"></Story></Preview>',
-      ''
+      '',
     ].join('\n');
 
     const parser = unified()
@@ -70,7 +70,7 @@ describe('mdjsStoryParse', () => {
         previewStoryTag: name => `<Preview><Story name="${name}"></Story></Preview>`,
       })
       .use(html);
-    const result = parser.processSync(input);
+    const result = await parser.process(input);
     expect(result.contents).to.equal(expected);
   });
 });

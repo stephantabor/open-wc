@@ -18,7 +18,7 @@ const { mdjsStoryParse } = require('../src/mdjsStoryParse.js');
 const { expect } = chai;
 
 describe('Integration', () => {
-  it('supports rehype slug, link, html', () => {
+  it('supports rehype slug, link, html', async () => {
     const input = [
       '## Intro',
       '## Intro',
@@ -44,12 +44,12 @@ describe('Integration', () => {
       .use(htmlSlug)
       .use(htmlHeading)
       .use(htmlStringify);
-    const result = parser.processSync(input);
+    const result = await parser.process(input);
     expect(result.contents).to.equal(expected);
     expect(result.data.jsCode).to.equal('const bar = 22;');
   });
 
-  it('supports JSX Code in markdown', () => {
+  it('supports JSX Code in markdown', async () => {
     const input = [
       '## Intro',
       '## Intro',
@@ -71,7 +71,7 @@ describe('Integration', () => {
       '</code></pre>',
       '<Story name="fooStory"></Story>',
       '<Preview><Story name="fooPreviewStory"></Story></Preview>',
-      ''
+      '',
     ].join('\n');
 
     const parser = unified()
@@ -84,19 +84,19 @@ describe('Integration', () => {
       .use(mdSlug)
       .use(mdHeadings)
       .use(mdStringify);
-    const result = parser.processSync(input);
+    const result = await parser.process(input);
     expect(result.contents).to.equal(expected);
     expect(result.data.stories).to.deep.equal([
       {
         key: 'fooStory',
         name: 'fooStory',
-        code: 'export const fooStory = () => {}'
+        code: 'export const fooStory = () => {}',
       },
       {
         key: 'fooPreviewStory',
         name: 'fooPreviewStory',
-        code: 'export const fooPreviewStory = () => {}'
-      }
+        code: 'export const fooPreviewStory = () => {}',
+      },
     ]);
   });
 });

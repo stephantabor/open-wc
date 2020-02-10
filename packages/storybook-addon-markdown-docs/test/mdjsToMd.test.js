@@ -11,7 +11,7 @@ function transformOutput(output) {
 }
 
 describe('mdjsToMd', () => {
-  it('transforms mdjs to html', () => {
+  it('transforms mdjs to html', async () => {
     const input = [
       //
       '# Title',
@@ -23,8 +23,8 @@ describe('mdjsToMd', () => {
       '- A',
       '- B',
     ].join('\n');
-
-    const output = transformOutput(mdjsToMd(input).html);
+    const mdResult = await mdjsToMd(input);
+    const output = transformOutput(mdResult.html);
 
     expect(output).to.eql([
       '<h1 id="title">Title</h1>',
@@ -38,9 +38,9 @@ describe('mdjsToMd', () => {
     ]);
   });
 
-  it('preserves codeblocks', () => {
+  it('preserves codeblocks', async () => {
     const input = [
-      // 
+      //
       '# Title',
       '',
       '```js',
@@ -52,7 +52,8 @@ describe('mdjsToMd', () => {
       '```',
     ].join('\n');
 
-    const output = transformOutput(mdjsToMd(input).html);
+    const mdResult = await mdjsToMd(input);
+    const output = transformOutput(mdResult.html);
 
     expect(output).to.eql([
       //
@@ -69,7 +70,7 @@ describe('mdjsToMd', () => {
     ]);
   });
 
-  it('turns story and preview codeblocks into jsx elements', () => {
+  it('turns story and preview codeblocks into jsx elements', async () => {
     const input = [
       //
       '# Title',
@@ -82,7 +83,8 @@ describe('mdjsToMd', () => {
       '```',
     ].join('\n');
 
-    const output = transformOutput(mdjsToMd(input).html);
+    const mdResult = await mdjsToMd(input);
+    const output = transformOutput(mdResult.html);
 
     expect(output).to.eql([
       //
@@ -93,7 +95,7 @@ describe('mdjsToMd', () => {
     ]);
   });
 
-  it('extracts code from stories', () => {
+  it('extracts code from stories', async () => {
     const input = [
       //
       '# Title',
@@ -106,7 +108,7 @@ describe('mdjsToMd', () => {
       '```',
     ].join('\n');
 
-    const output = mdjsToMd(input);
+    const output = await mdjsToMd(input);
 
     expect(output.stories).to.eql([
       {

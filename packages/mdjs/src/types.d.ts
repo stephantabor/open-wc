@@ -1,8 +1,4 @@
-import { File } from '@babel/types';
-import { Node } from 'commonmark';
-
 export interface MarkdownResult {
-  mdAst: Node;
   html: string;
   jsCode: string;
   stories: Story[];
