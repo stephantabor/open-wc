@@ -6,6 +6,7 @@ const remark2rehype = require('remark-rehype');
 const htmlStringify = require('rehype-stringify');
 const htmlSlug = require('rehype-slug');
 const htmlHeading = require('rehype-autolink-headings');
+const raw = require('rehype-raw');
 
 const mdSlug = require('remark-slug');
 const mdHeadings = require('remark-autolink-headings');
@@ -28,6 +29,12 @@ describe('Integration', () => {
       '```js script',
       'const bar = 22;',
       '```',
+      '```js story',
+      'export const fooStory = () => {}',
+      '```',
+      '```js preview-story',
+      'export const fooPreviewStory = () => {}',
+      '```',
     ].join('\n');
 
     const expected = [
@@ -35,17 +42,21 @@ describe('Integration', () => {
       '<h2 id="intro-1"><a aria-hidden="true" href="#intro-1"><span class="icon icon-link"></span></a>Intro</h2>',
       '<pre><code class="language-js">const foo = 1;',
       '</code></pre>',
-    ].join('\n');
+      '<mdjs-story name="fooStory" id="mdjs-story-0"></mdjs-story>',
+      '<mdjs-preview name="fooPreviewStory" id="mdjs-story-1"></mdjs-preview>',
+    ];
 
     const parser = unified()
       .use(markdown)
       .use(mdjsParse)
-      .use(remark2rehype)
+      .use(mdjsStoryParse)
+      .use(remark2rehype, { allowDangerousHTML: true })
+      .use(raw)
       .use(htmlSlug)
       .use(htmlHeading)
       .use(htmlStringify);
     const result = await parser.process(input);
-    expect(result.contents).to.equal(expected);
+    expect(result.contents.split('\n')).to.deep.equal(expected);
     expect(result.data.jsCode).to.equal('const bar = 22;');
   });
 
