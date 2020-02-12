@@ -5,27 +5,63 @@
 ## Format
 
 The format is meant to allow using JavaScript with Markdown.
-It does so by "annotating" JavaScript that should execute in Markdown.
+It does so by "annotating" JavaScript that should be execute in Markdown.
 
-````
+All you need to do is have a code block with `js script`.
+
+````md
 ```js script
 // execute me
 ```
 ````
 
-## Usage
+### Web Components
+
+One very good use case for that can be web components.
+HTML already works in markdown so all you need is to load a web components definition file.
+
+You could even do so within the same markdown file.
+
+````md
+## This is my-el
+
+<my-el></my-el>
+
+```js script
+import { LitElement, html } from 'https://unpkg.com/lit-element?module';
+
+customElements.define(
+  'my-el',
+  class extends LitElement {
+    render() {
+      this.innerHTML = '<p style="color: red">I am alive</p>';
+    }
+  },
+);
+```
+````
+
+### Usage
+
+mdjs is build to be integrated within the [unifiedjs](https://unifiedjs.com/) system.
 
 ```js
-import { fs } from 'fs';
-import { renderReadme } from '@mdjs/core';
+const unified = require('unified');
+const markdown = require('remark-parse');
+const htmlStringify = require('remark-html');
 
-const reader = new Parser();
-const writer = new HtmlRenderer();
-const md = fs.readFileSync('./demo.md', 'utf-8');
-const parsed = reader.parse(md);
-
-const result = writer.render(parsed);
-fs.writeFileSync('./index.html', html, 'utf-8');
+const parser = unified()
+  .use(markdown)
+  .use(mdjsParse)
+  .use(htmlStringify);
+const result = await parser.process(body);
+const { jsCode } = result.data;
+console.log(result.contents);
+// <h1>This is my-el></h1>
+// <my-el></my-el>
+console.log(jsCode);
+// customElements.define('my-el', class extends HTMLElement {
+// ...
 ```
 
 <script>

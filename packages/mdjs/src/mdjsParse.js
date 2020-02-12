@@ -17,9 +17,9 @@ function mdjsParse() {
     remove(tree, node => node.type === 'code' && node.lang === 'js' && node.meta === 'script');
 
     return tree;
-  }
+  };
 }
 
 module.exports = {
-  mdjsParse
-}
+  mdjsParse,
+};

@@ -3,8 +3,12 @@
 
 const { mdjsParse } = require('./src/mdjsParse.js');
 const { mdjsStoryParse } = require('./src/mdjsStoryParse.js');
+const { mdjsDocPage } = require('./src/mdjsDocPage.js');
+const { resolveToUnpkg } = require('./src/resolveToUnpkg.js');
 
 module.exports = {
   mdjsParse,
   mdjsStoryParse,
+  mdjsDocPage,
+  resolveToUnpkg,
 };
