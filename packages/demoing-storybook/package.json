@@ -23,7 +23,7 @@
     "prepublishOnly": "../../scripts/insert-header.js",
     "site:build": "node src/build/cli.js --config-dir demo/.storybook -o ../../_site/demoing-storybook",
     "start": "npm run storybook",
-    "storybook": "node src/start/cli.js -c demo/.storybook --root-dir ../../",
+    "storybook": "node src/start/cli.js -c demo/.storybook --root-dir ../../ --experimental-md-docs",
     "storybook:build": "node src/build/cli.js -c demo/.storybook",
     "test": "mocha test/**/*.test.js test/*.test.js",
     "test:watch": "mocha test/**/*.test.js test/*.test.js --watch"
@@ -58,6 +58,7 @@
     "magic-string": "^0.25.4",
     "rollup": "^1.15.6",
     "rollup-plugin-index-html": "^1.9.0",
+    "storybook-addon-markdown-docs": "^0.0.2",
     "storybook-prebuilt": "^1.5.0"
   },
   "devDependencies": {
