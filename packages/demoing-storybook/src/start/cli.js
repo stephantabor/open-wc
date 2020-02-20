@@ -8,7 +8,7 @@ const fs = require('fs');
 const readCommandLineArgs = require('./readCommandLineArgs');
 const mdjsToCsfTransformer = require('./transformers/mdjsToCsfTransformer');
 const createServeStorybookTransformer = require('./transformers/createServeStorybookTransformer');
-const createMdxToJs = require('./transformers/createMdxToJs');
+const { mdxToCsfTransformer } = require('./transformers/mdxToCsfTransformer');
 const toBrowserPath = require('../shared/toBrowserPath');
 const getAssets = require('../shared/getAssets');
 
@@ -42,7 +42,7 @@ async function run() {
   config.responseTransformers = [
     ...(config.responseTransformers || []),
     config.experimentalMdDocs ? mdjsToCsfTransformer : null,
-    createMdxToJs(),
+    mdxToCsfTransformer,
     createServeStorybookTransformer({
       assets,
       previewImport,
