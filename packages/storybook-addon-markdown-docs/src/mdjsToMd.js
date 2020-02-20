@@ -11,6 +11,7 @@ const mdStringify = require('remark-html');
 // @ts-ignore
 const detab = require('detab');
 const u = require('unist-builder');
+const visit = require('unist-util-visit-parents');
 
 const { mdjsParse, mdjsStoryParse } = require('@mdjs/core');
 
@@ -22,6 +23,21 @@ function code(h, node) {
   const value = node.value ? detab(node.value) : '';
   const raw = ['', `\`\`\`${node.lang}`, value, '```'].join('\n');
   return h.augment(node, u('raw', raw));
+}
+
+function transformPropsHook() {
+  return tree => {
+    visit(tree, 'html', (node, ancestors) => {
+      if (node.value.startsWith('<sb-props')) {
+        /* eslint-disable no-param-reassign */
+        ancestors[1].type = 'html';
+        ancestors[1].value = node.value.replace('<sb-props', '<Props').replace('>', ' />');
+        ancestors[1].children = [];
+        /* eslint-enable no-param-reassign */
+      }
+    });
+    return tree;
+  };
 }
 
 /**
@@ -36,6 +52,7 @@ async function mdjsToMd(markdownText) {
       storyTag: name => `<Story name="${name}"></Story>`,
       previewStoryTag: name => `<Preview><Story name="${name}"></Story></Preview>`,
     })
+    .use(transformPropsHook)
     .use(mdSlug)
     .use(mdStringify, {
       handlers: {

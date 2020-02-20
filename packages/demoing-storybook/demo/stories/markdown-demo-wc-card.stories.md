@@ -39,7 +39,7 @@ export const Simple = () => html`
 
 ## API
 
-TODO: Props table
+<sb-props of="demo-wc-card"></sb-props>
 
 ## Playground
 

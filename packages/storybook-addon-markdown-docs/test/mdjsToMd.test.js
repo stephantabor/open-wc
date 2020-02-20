@@ -56,7 +56,6 @@ describe('mdjsToMd', () => {
     const output = transformOutput(mdResult.html);
 
     expect(output).to.eql([
-      //
       '<h1 id="title">Title</h1>',
       '',
       '```js',
@@ -91,6 +90,24 @@ describe('mdjsToMd', () => {
       '<h1 id="title">Title</h1>',
       '<Story name="MyStory"></Story>',
       '<Preview><Story name="YourStory"></Story></Preview>',
+      '',
+    ]);
+  });
+
+  it('turns <sb-props> into <Props> elements', async () => {
+    const input = [
+      //
+      '# Title',
+      '<sb-props of="keep-it"></sb-props>',
+    ].join('\n');
+
+    const mdResult = await mdjsToMd(input);
+    const output = transformOutput(mdResult.html);
+
+    expect(output).to.eql([
+      //
+      '<h1 id="title">Title</h1>',
+      '<Props of="keep-it" />',
       '',
     ]);
   });
