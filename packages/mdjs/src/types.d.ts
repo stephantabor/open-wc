@@ -9,3 +9,11 @@ export interface Story {
   name: string;
   code: string;
 }
+
+export interface ParseResult {
+  contents: string;
+  data: {
+    stories: Story[];
+    jsCode: string;
+  };
+}

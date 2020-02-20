@@ -1,4 +1,4 @@
-const { init, parse } = require('es-module-lexer');
+const { parse } = require('es-module-lexer');
 
 /**
  * @param {string} code
@@ -43,8 +43,7 @@ function getPkgMetaFromImport(pkgImport, fallbackName = '') {
  * @param {object} pkgJson
  */
 async function resolveToUnpkg(code, pkgJson) {
-  await init;
-  const [imports] = parse(code);
+  const [imports] = await parse(code);
 
   const versions = {
     ...pkgJson.dependencies,

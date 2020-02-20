@@ -1,6 +1,7 @@
 /** @typedef {import('@babel/core').types.File} File */
 
 const { parse } = require('@babel/parser');
+// @ts-ignore
 const { codeFrameColumns } = require('@babel/code-frame');
 const {
   isExportDefaultDeclaration,

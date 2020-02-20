@@ -1,6 +1,14 @@
+/** @typedef {import('./types').Story} Story */
+/** @typedef {(name: string, i: number) => string} TagFunction */
+/** @typedef {import('unist').Node} UnistNode */
+
 const visit = require('unist-util-visit');
 const { init, parse } = require('es-module-lexer');
 
+/**
+ * @param {string} code
+ * @returns {Story}
+ */
 function extractStoryData(code) {
   const parsed = parse(code);
   const key = parsed[1][0];
@@ -8,18 +16,29 @@ function extractStoryData(code) {
   return { key, name, code };
 }
 
+/** @type {TagFunction} */
 function defaultStoryTag(name, i) {
   return `<mdjs-story name="${name}" id="mdjs-story-${i}"></mdjs-story>`;
 }
 
+/**
+ * @param {string} name
+ * @param {number} i
+ */
 function defaultPreviewStoryTag(name, i) {
   return `<mdjs-preview name="${name}" id="mdjs-story-${i}"></mdjs-preview>`;
 }
 
+/**
+ * @param {object} arg
+ * @param {TagFunction} [arg.storyTag]
+ * @param {TagFunction} [arg.previewStoryTag]
+ */
 function mdjsStoryParse({
   storyTag = defaultStoryTag,
   previewStoryTag = defaultPreviewStoryTag,
 } = {}) {
+  /** @type {Story[]} */
   const stories = [];
 
   return async (tree, file) => {

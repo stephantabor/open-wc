@@ -1,14 +1,23 @@
+/** @typedef {import('@mdjs/core').Story} Story */
 /** @typedef {import('@mdjs/core').MarkdownResult} MarkdownResult */
+/** @typedef {import('@mdjs/core').ParseResult} ParseResult */
 
 const unified = require('unified');
 const markdown = require('remark-parse');
+// @ts-ignore
 const mdSlug = require('remark-slug');
+// @ts-ignore
 const mdStringify = require('remark-html');
+// @ts-ignore
 const detab = require('detab');
 const u = require('unist-builder');
 
 const { mdjsParse, mdjsStoryParse } = require('@mdjs/core');
 
+/**
+ * @param {*} h
+ * @param {*} node
+ */
 function code(h, node) {
   const value = node.value ? detab(node.value) : '';
   const raw = ['', `\`\`\`${node.lang}`, value, '```'].join('\n');
@@ -33,7 +42,9 @@ async function mdjsToMd(markdownText) {
         code,
       },
     });
-  const result = await parser.process(markdownText);
+  /** @type {unknown} */
+  const parseResult = await parser.process(markdownText);
+  const result = /** @type {ParseResult} */ (parseResult);
 
   return {
     html: result.contents,

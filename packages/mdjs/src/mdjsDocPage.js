@@ -1,3 +1,6 @@
+/** @typedef {import('./types').Story} Story */
+/** @typedef {import('./types').ParseResult} ParseResult */
+
 const unified = require('unified');
 const markdown = require('remark-parse');
 const remark2rehype = require('remark-rehype');
@@ -9,10 +12,20 @@ const htmlHeading = require('rehype-autolink-headings');
 const { mdjsParse } = require('./mdjsParse.js');
 const { mdjsStoryParse } = require('./mdjsStoryParse.js');
 
+/**
+ * @param {string} jsCode
+ * @returns {Promise<string>}
+ */
 async function defaultJsProcessor(jsCode) {
   return jsCode;
 }
 
+/**
+ *
+ * @param {string} body
+ * @param {object} param1
+ * @param {(jsCode: string) => Promise<string>} [param1.jsProcessor]
+ */
 async function mdjsDocPage(body, { jsProcessor = defaultJsProcessor } = {}) {
   const parser = unified()
     .use(markdown)
@@ -23,7 +36,10 @@ async function mdjsDocPage(body, { jsProcessor = defaultJsProcessor } = {}) {
     .use(htmlSlug)
     .use(htmlHeading)
     .use(htmlStringify);
-  const result = await parser.process(body);
+
+  /** @type {unknown} */
+  const parseResult = await parser.process(body);
+  const result = /** @type {ParseResult} */ (parseResult);
 
   const { stories, jsCode } = result.data;
   const storiesCode = stories.map(story => story.code).join('\n');
