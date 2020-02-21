@@ -31,6 +31,10 @@ describe('mdjsToCsf', () => {
       '```js preview-story',
       'export const MyOtherStory = () => html`<div>My other story</div>`',
       '```',
+      '',
+      '## API',
+      '',
+      '<sb-props of="my-component"></sb-props>',
     ].join('\n');
 
     const output = (await mdjsToCsf(input, '/foo.js')).split('\n');

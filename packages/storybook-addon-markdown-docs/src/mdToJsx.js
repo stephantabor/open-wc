@@ -10,7 +10,7 @@ const mdxToJsx = require('@mdx-js/mdx/mdx-hast-to-jsx');
  */
 function compileMdToJsx(markdown, filepath) {
   return mdx(
-    `import { Story, Preview } from 'storybook-prebuilt/addon-docs/blocks.js';\n\n${markdown}`,
+    `import { Story, Preview, Props } from 'storybook-prebuilt/addon-docs/blocks.js';\n\n${markdown}`,
     {
       compilers: [
         // custom mdx compiler which ensures mdx doesn't add a default export,
