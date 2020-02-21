@@ -1,5 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
-
 const unified = require('unified');
 const markdown = require('remark-parse');
 const html = require('remark-html');

@@ -1,9 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
-
-const unified = require('unified');
-const markdown = require('remark-parse');
-const html = require('remark-html');
-
 const chai = require('chai');
 const { resolveToUnpkg } = require('../src/resolveToUnpkg.js');
 

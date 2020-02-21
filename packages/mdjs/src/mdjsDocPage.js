@@ -46,6 +46,7 @@ async function mdjsDocPage(body, { jsProcessor = defaultJsProcessor } = {}) {
   const storiesKeys = stories.map(story => story.key);
 
   const fullJsCode = await jsProcessor(`
+    import '@wcd/dakmor.mdjs-story/dist/mdjs-story.js';
     ${jsCode}
     ${storiesCode}
     const stories = [${storiesKeys.join(',')}];
