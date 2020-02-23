@@ -8812,11 +8812,6 @@ es-module-lexer@^0.3.13:
   resolved "https://registry.yarnpkg.com/es-module-lexer/-/es-module-lexer-0.3.13.tgz#b7f986efeb55a5d3ce0f3e482409ff43c462d398"
   integrity sha512-8VCx4z2cIGFKx715cOvicAieDBjf2B6EYq58yzctIkKnXpKGEsd+qTf+LU1KuTkosWkWH6h1iDV7LWoKmdkaOQ==
 
-es-module-lexer@^0.3.14:
-  version "0.3.14"
-  resolved "https://registry.yarnpkg.com/es-module-lexer/-/es-module-lexer-0.3.14.tgz#091b02a3f22ae1fccf0a0c731179db929ce2d4aa"
-  integrity sha512-g7OCaU3py+ROON+JdSQiDW5hChAgDEG223/88IW5ddLTXRz2CEGQowkwIWiK116jX28j6RTxLS+AxIP70NpwkA==
-
 es-module-shims@^0.4.6:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/es-module-shims/-/es-module-shims-0.4.6.tgz#5decb313d52e5c62f6c19ed7e664ee9d66317d8a"

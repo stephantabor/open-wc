@@ -30,18 +30,64 @@ You could even do so within the same markdown file.
 ```js script
 import { LitElement, html } from 'https://unpkg.com/lit-element?module';
 
-customElements.define(
-  'my-el',
-  class extends LitElement {
-    render() {
-      this.innerHTML = '<p style="color: red">I am alive</p>';
-    }
-  },
-);
+class MyEl extends LitElement {
+  render() {
+    this.innerHTML = '<p style="color: red">I am alive</p>';
+  }
+}
+
+customElements.define('my-el', MyEl);
 ```
 ````
 
 ### Usage
+
+#### Basic
+
+mdjs offers two more "basic" integrations
+
+##### `mdjsDocPage`
+
+Creates a full blown html page by passing in the markdown.
+
+```js
+const { mdjsDocPage } = require('@open-wc/mdjs');
+
+const page = await mdjsDocPage(markdownString);
+/*
+<html>
+  ... // load styles/components for mdjs, start stories
+  <body>
+    <h1>Some Markdown</h1>
+  </body>
+</html>
+*/
+```
+
+##### `mdjsProcess`
+
+Pass in multiple markdown documents and you get back all the jsCode and rendered html.
+
+```js
+const { mdjsProcess } = require('@open-wc/mdjs');
+
+const data = await mdjsProcess([markdownStringOne, markdownStringTwo]);
+console.log(data);
+/*
+{ 
+  jsCode: "
+    import '@mdjs/mdjs-story/mdjs-story.js';
+    ...
+  ",
+  allHtml: [
+    '<h1>Markdown One</h1>', 
+    '<h2>Markdown Two</h2>'
+  ]
+}
+*/
+```
+
+#### Advanced
 
 mdjs is build to be integrated within the [unifiedjs](https://unifiedjs.com/) system.
 
@@ -49,6 +95,7 @@ mdjs is build to be integrated within the [unifiedjs](https://unifiedjs.com/) sy
 const unified = require('unified');
 const markdown = require('remark-parse');
 const htmlStringify = require('remark-html');
+const mdjsParse = require('@open-wc/mdjs');
 
 const parser = unified()
   .use(markdown)
@@ -63,6 +110,86 @@ console.log(jsCode);
 // customElements.define('my-el', class extends HTMLElement {
 // ...
 ```
+
+## Demo Support (Story)
+
+mdjs comes with some additional helpers like
+
+### js story
+
+The code snippet will actually get executed at that place and you will have a live demo
+
+````
+```js story
+export const JsStory = () =>
+  html`
+    <demo-wc-card>JS Story</demo-wc-card>
+  `;
+```
+````
+
+#### full code support
+
+````
+```js story
+export const JsStory = () => {
+  const calculateSomething = 12;
+  return html`
+    <demo-wc-card .header=${`Something: ${calculateSomething}`}>JS Story</demo-wc-card>
+  `;
+}
+```
+````
+
+### js preview story
+
+Will become a live demo wrapped in a container with a show code button.
+
+````
+```js preview story
+export const JsStory = () =>
+  html`
+    <demo-wc-card>JS Story</demo-wc-card>
+  `;
+```
+````
+
+## Supported Systems
+
+### es-dev-server
+
+Preview your mdjs readme with live demos and auto reload.
+
+- Add to your `package.json`:
+
+  ```json
+  "scripts": {
+    "start": "es-dev-server",
+  }
+  ```
+
+- Create a `es-dev-server.config.js` in the root of your repo.
+
+  ```js
+  const { mdjsTransformer } = require('@open-wc/mdjs');
+
+  module.exports = {
+    nodeResolve: true,
+    open: 'README.md',
+    watch: true,
+    responseTransformers: [mdjsTransformer],
+  };
+  ```
+
+### Storybook
+
+Please check out [storybook-addon-markdown-docs]().
+
+### Chrome Extension for Github (early alpha)
+
+See live demos directly your github page, markdown files, issues, pull requests...
+
+Please check out [mdjs-viewer]().
 
 <script>
   export default {

@@ -33,13 +33,16 @@ function defaultPreviewStoryTag(name, i) {
  * @param {object} arg
  * @param {TagFunction} [arg.storyTag]
  * @param {TagFunction} [arg.previewStoryTag]
+ * @param {number} [arg.counter]
  */
 function mdjsStoryParse({
   storyTag = defaultStoryTag,
   previewStoryTag = defaultPreviewStoryTag,
+  counter = 0,
 } = {}) {
   /** @type {Story[]} */
   const stories = [];
+  // const counter = 10;
 
   return async (tree, file) => {
     // unifiedjs expects node changes to be made on the given node...
@@ -49,14 +52,16 @@ function mdjsStoryParse({
       if (node.lang === 'js' && node.meta === 'story') {
         const storyData = extractStoryData(node.value);
         node.type = 'html';
-        node.value = storyTag(storyData.name, stories.length);
+        node.value = storyTag(storyData.name, counter);
         stories.push(storyData);
+        counter += 1;
       }
       if (node.lang === 'js' && node.meta === 'preview-story') {
         const storyData = extractStoryData(node.value);
         node.type = 'html';
-        node.value = previewStoryTag(storyData.name, stories.length);
+        node.value = previewStoryTag(storyData.name, counter);
         stories.push(storyData);
+        counter += 1;
       }
     });
     // we can only return/modify the tree but stories should not be part of the tree

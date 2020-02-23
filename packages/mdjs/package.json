@@ -24,6 +24,8 @@
     "test:watch": "mocha --watch"
   },
   "files": [
+    "*.d.ts",
+    "*.js",
     "src"
   ],
   "keywords": [
@@ -36,7 +38,7 @@
     "@types/unist": "^2.0.3",
     "@types/vfile": "^4.0.0",
     "@wcd/dakmor.mdjs-story": "0.1.0",
-    "es-module-lexer": "^0.3.14",
+    "es-module-lexer": "^0.3.13",
     "github-markdown-css": "^3.0.1",
     "rehype-autolink-headings": "^2.0.5",
     "rehype-raw": "^4.0.1",
@@ -56,7 +58,6 @@
     "remark-stringify": "^7.0.4",
     "chai": "^4.2.0",
     "es-dev-server": "^1.39.0",
-    "lit-element": "^2.2.1",
     "mocha": "^6.2.2"
   },
   "types": "index.d.ts"

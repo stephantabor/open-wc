@@ -6,7 +6,7 @@ Just see for yourself.
 <my-el></my-el>
 
 ```js script
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, css } from 'lit-element';
 
 class MyEl extends LitElement {
   static get properties() {

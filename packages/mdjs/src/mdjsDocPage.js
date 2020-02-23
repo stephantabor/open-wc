@@ -1,60 +1,11 @@
-/** @typedef {import('./types').Story} Story */
-/** @typedef {import('./types').ParseResult} ParseResult */
-
-const unified = require('unified');
-const markdown = require('remark-parse');
-const remark2rehype = require('remark-rehype');
-const raw = require('rehype-raw');
-const htmlStringify = require('rehype-stringify');
-const htmlSlug = require('rehype-slug');
-const htmlHeading = require('rehype-autolink-headings');
-
-const { mdjsParse } = require('./mdjsParse.js');
-const { mdjsStoryParse } = require('./mdjsStoryParse.js');
-
-/**
- * @param {string} jsCode
- * @returns {Promise<string>}
- */
-async function defaultJsProcessor(jsCode) {
-  return jsCode;
-}
+const { mdjsProcess } = require('./mdjsProcess.js');
 
 /**
  *
  * @param {string} body
- * @param {object} param1
- * @param {(jsCode: string) => Promise<string>} [param1.jsProcessor]
  */
-async function mdjsDocPage(body, { jsProcessor = defaultJsProcessor } = {}) {
-  const parser = unified()
-    .use(markdown)
-    .use(mdjsParse)
-    .use(mdjsStoryParse)
-    .use(remark2rehype, { allowDangerousHTML: true })
-    .use(raw)
-    .use(htmlSlug)
-    .use(htmlHeading)
-    .use(htmlStringify);
-
-  /** @type {unknown} */
-  const parseResult = await parser.process(body);
-  const result = /** @type {ParseResult} */ (parseResult);
-
-  const { stories, jsCode } = result.data;
-  const storiesCode = stories.map(story => story.code).join('\n');
-  const storiesKeys = stories.map(story => story.key);
-
-  const fullJsCode = await jsProcessor(`
-    import '@wcd/dakmor.mdjs-story/dist/mdjs-story.js';
-    ${jsCode}
-    ${storiesCode}
-    const stories = [${storiesKeys.join(',')}];
-    stories.forEach((story, i) => {
-      document.getElementById('mdjs-story-' + i).story = story;
-    });
-  `);
-
+async function mdjsDocPage(body) {
+  const data = await mdjsProcess([body]);
   return `
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/node_modules/github-markdown-css/github-markdown.css">
@@ -77,10 +28,10 @@ async function mdjsDocPage(body, { jsProcessor = defaultJsProcessor } = {}) {
       }
     </style>
     <script type="module">
-      ${fullJsCode}
+      ${data.jsCode}
     </script>
     <div class="markdown-body">
-      ${result.contents}
+      ${data.allHtml[0]}
     </div>
   `;
 }

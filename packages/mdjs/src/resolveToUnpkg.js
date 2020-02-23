@@ -26,14 +26,23 @@ function getPkgMetaFromImport(pkgImport, fallbackName = '') {
   }
 
   let scope = '';
-  let nameAndPath = pkgImport;
+  let name = '';
+  let path = '';
   if (pkgImport.startsWith('@')) {
-    const scopeParts = pkgImport.split('@');
-    [scope, nameAndPath] = scopeParts;
+    const parts = pkgImport.split('/');
+    scope = parts.shift();
+    name = parts.shift();
+    if (parts.length > 0) {
+      path = `/${parts.join('/')}`;
+    }
+    name = `${scope}/${name}`;
+  } else {
+    const parts = pkgImport.split('/');
+    name = parts.shift();
+    if (parts.length > 0) {
+      path = `/${parts.join('/')}`;
+    }
   }
-  const pathParts = nameAndPath.split('/');
-  const name = scope + pathParts[0];
-  const path = pathParts.length > 1 ? `/${pathParts.splice(1).join('/')}` : '';
   return { name, path };
 }
 
@@ -42,22 +51,29 @@ function getPkgMetaFromImport(pkgImport, fallbackName = '') {
  * @param {string} code
  * @param {object} pkgJson
  */
-async function resolveToUnpkg(code, pkgJson) {
+async function resolveToUnpkg(code, pkgJson = {}) {
   const [imports] = await parse(code);
 
   const versions = {
     ...pkgJson.dependencies,
     ...pkgJson.devDependencies,
   };
-  versions[pkgJson.name] = pkgJson.version;
+  if (pkgJson.name && pkgJson.version) {
+    versions[pkgJson.name] = pkgJson.version;
+  }
 
   let result = code;
   for (const importMeta of imports.reverse()) {
     const importPath = code.substring(importMeta.s, importMeta.e);
-    const pkgMeta = getPkgMetaFromImport(importPath, pkgJson.name);
-    const version = versions[pkgMeta.name];
-    const newImport = `https://unpkg.com/${pkgMeta.name}@${version}${pkgMeta.path}?module`;
-    result = replaceCode(result, newImport, importMeta.s, importMeta.e);
+    if (!importPath.startsWith('http')) {
+      const pkgMeta = getPkgMetaFromImport(importPath, pkgJson.name);
+      const version = versions[pkgMeta.name];
+      let newImport = `https://unpkg.com/${pkgMeta.name}${pkgMeta.path}?module`;
+      if (version) {
+        newImport = `https://unpkg.com/${pkgMeta.name}@${version}${pkgMeta.path}?module`;
+      }
+      result = replaceCode(result, newImport, importMeta.s, importMeta.e);
+    }
   }
 
   return result;
