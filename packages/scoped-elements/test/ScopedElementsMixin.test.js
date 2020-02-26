@@ -1,7 +1,7 @@
 import { expect, fixture, defineCE } from '@open-wc/testing';
 import { LitElement, html } from 'lit-element';
-import { ScopedElementsMixin } from '../index.js';
-import { getFromTagsCache } from '../src/registerElement.js';
+import { ScopedElementsMixin, none } from '../index.js';
+import { getFromGlobalTagsCache } from '../src/registerElement.js';
 
 class FeatureA extends LitElement {
   render() {
@@ -256,8 +256,40 @@ describe('ScopedElementsMixin', () => {
       },
     );
     const el = await fixture(`<${tag}></${tag}>`);
-    expect(el.shadowRoot.children[0]).to.be.an.instanceOf(FeatureC);
 
-    expect(getFromTagsCache(FeatureD)).to.be.undefined;
+    expect(el.shadowRoot.children[0]).to.be.an.instanceOf(FeatureC);
+    expect(getFromGlobalTagsCache(FeatureD)).to.be.undefined;
+  });
+
+  it('supports lazy loaded elements', async () => {
+    const tag = defineCE(
+      class extends ScopedElementsMixin(LitElement) {
+        static get scopedElements() {
+          return {
+            'feature-a': FeatureA,
+            'feature-b': none,
+          };
+        }
+
+        render() {
+          return html`
+            <feature-a></feature-a>
+            <feature-b></feature-b>
+            <feature-c></feature-c>
+          `;
+        }
+      },
+    );
+
+    const el = await fixture(`<${tag}></${tag}>`);
+
+    expect(el.shadowRoot.children[0]).to.be.an.instanceOf(FeatureA);
+    expect(el.shadowRoot.children[1]).to.not.be.an.instanceOf(FeatureB);
+    expect(el.shadowRoot.children[2]).to.not.undefined;
+
+    // @ts-ignore
+    el.defineLazyScopedElement('feature-b', FeatureB);
+
+    expect(el.shadowRoot.children[1]).to.be.an.instanceOf(FeatureB);
   });
 });

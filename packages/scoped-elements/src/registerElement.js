@@ -1,55 +1,103 @@
 import { createUniqueTag } from './createUniqueTag.js';
 
 /**
- * Global cache for tag names
+ * The global cache for tag names
  *
  * @type {Map<typeof HTMLElement, string>}
  */
-const tagsCache = new Map();
+const globalTagsCache = new Map();
 
 /**
- * Adds a tag to the cache
+ * Adds a tag to the global cache
  *
  * @param {string} tag
  * @param {typeof HTMLElement} klass
  */
-const addToTagsCache = (tag, klass) => tagsCache.set(klass, tag);
+const addToGlobalTagsCache = (tag, klass) => globalTagsCache.set(klass, tag);
 
 /**
- * Gets a tag from the cache
+ * Gets a tag from the global cache
  *
  * @exports
  * @param {typeof HTMLElement} klass
  * @returns {undefined|string}
  */
-export const getFromTagsCache = klass => tagsCache.get(klass);
+export const getFromGlobalTagsCache = klass => globalTagsCache.get(klass);
 
 /**
- * Define an scoped custom element storing the scoped tag name in the cache
+ * Checks if klass is a subclass of HTMLElement
+ *
+ * @param {typeof HTMLElement} klass
+ * @returns {boolean}
+ */
+const extendsHTMLElement = klass => Object.prototype.isPrototypeOf.call(HTMLElement, klass);
+
+/**
+ * Defines a custom element
  *
  * @param {string} tagName
  * @param {typeof HTMLElement} klass
+ * @param {CustomElementRegistry} registry
+ */
+const defineElement = (tagName, klass, registry = customElements) => {
+  registry.define(tagName, class extends klass {});
+  addToGlobalTagsCache(tagName, klass);
+};
+
+/**
+ * Define a scoped custom element storing the scoped tag name in the cache
+ *
+ * @param {string} tagName
+ * @param {typeof HTMLElement} klass
+ * @param {Map<string, string>} tagsCache
  * @returns {string}
  */
-const defineElement = (tagName, klass) => {
+const defineElementAndStoreInCache = (tagName, klass, tagsCache) => {
   const registry = customElements;
-  const tag = createUniqueTag(registry, tagName);
+  const tag = createUniqueTag(tagName, registry);
 
-  // we extend it just in case the class has been defined manually
-  registry.define(tag, class extends klass {});
-  addToTagsCache(tag, klass);
+  if (extendsHTMLElement(klass)) {
+    // @ts-ignore
+    // we extend it just in case the class has been defined manually
+    defineElement(tag, klass, registry);
+  } else {
+    if (!tagsCache) {
+      throw new Error('Lazy scoped elements requires the use of tags cache');
+    }
+
+    tagsCache.set(tagName, tag);
+  }
 
   return tag;
 };
 
 /**
- * Gets an scoped tag name from cache or generates a new one and defines the element if needed
+ * Gets a scoped tag name from the cache or generates a new one and defines the element if needed
  *
  * @exports
  * @param {string} tagName
  * @param {typeof HTMLElement} klass
+ * @param {Map<string, string>} tagsCache
  * @returns {string}
  */
-export function registerElement(tagName, klass) {
-  return getFromTagsCache(klass) || defineElement(tagName, klass);
+export function registerElement(tagName, klass, tagsCache = undefined) {
+  const tag =
+    getFromGlobalTagsCache(klass) ||
+    (tagsCache && tagsCache.get(tagName)) ||
+    defineElementAndStoreInCache(tagName, klass, tagsCache);
+
+  return tag;
+}
+
+/**
+ * Defines a lazy element
+ *
+ * @param {string} tagName
+ * @param {typeof HTMLElement} klass
+ * @param {Map<string, string>} tagsCache
+ */
+export function defineLazyScopedElement(tagName, klass, tagsCache) {
+  const tag = tagsCache.get(tagName);
+
+  defineElement(tag, klass, customElements);
 }
